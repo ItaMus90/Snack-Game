@@ -1,42 +1,118 @@
 package com.game.snake;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by Itamar on 29-Aug-17.
  */
-public class Snake implements ActionListener
+public class Snake
 {
-    public static Snake snake;
+    public static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3 ,SCALA = 10;
+    private int ticks = 0, direction = DOWN , score;
+    private List<Point> snakeParts;
+    private Point head, cherry;
+    private Random random;
+    private Dimension dimension;
+    private boolean over;
 
-    public JFrame jFrame;
-    public RenderPanel panel;
-    public Timer timer = new Timer(20,this);
-
-
-    public Snake()
+    public Snake(Dimension dim)
     {
-        Dimension dimension= Toolkit.getDefaultToolkit().getScreenSize();
-        jFrame = new JFrame("Snake");
-        jFrame.setVisible(true);
-        jFrame.setSize(800,800);
-        jFrame.setLocation(dimension.width / (2 * jFrame.getWidth()),dimension.height / (2 * jFrame.getHeight()));
-        jFrame.add(panel = new RenderPanel());
-        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        timer.start();
+        head = new Point(0,0);
+        snakeParts = new ArrayList<>();
+        random = new Random();
+        cherry = new Point(dim.width / SCALA, dim.height / SCALA);
+        dimension = dim;
+        over = false;
     }
 
-    public static void main(String[] args)
+    public void GrowSnake()
     {
-        snake = new Snake();
+        ticks ++;
+
+        if (ticks % 10 == 0 && head != null && !over)
+        {
+            switch (direction)
+            {
+                case UP:
+                    addUP();
+                    break;
+                case DOWN:
+                    addDOWN();
+                    break;
+                case LEFT:
+                    addLEFT();
+                    break;
+                case RIGHT:
+                    addRIGHT();
+                    break;
+            }
+
+            snakeParts.remove(0);
+            head = snakeParts.get(snakeParts.size() - 1);
+
+            if (cherry != null)
+            {
+                if (head.equals(cherry))
+                {
+                    score++;
+                    cherry.setLocation(dimension.width / SCALA, dimension.height / SCALA);
+                }
+            }
+        }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e)
+    private void addUP()
     {
-        panel.repaint();
+        if (head.y - 1 > 0)
+        {
+            snakeParts.add(new Point(head.x , head.y - 1));
+        }
+        else
+        {
+            over = true;
+        }
+    }
+
+    private void addDOWN()
+    {
+        if (head.y + 1 < (dimension.height / SCALA))
+        {
+            snakeParts.add(new Point(head.x , head.y + 1));
+        }
+        else
+        {
+            over = true;
+        }
+    }
+
+    private void addLEFT()
+    {
+        if (head.x - 1 > 0)
+        {
+            snakeParts.add(new Point(head.x - 1, head.y));
+        }
+        else
+        {
+            over = true;
+        }
+    }
+
+    private void addRIGHT()
+    {
+        if (head.x + 1 < (dimension.width / SCALA))
+        {
+            snakeParts.add(new Point(head.x + 1, head.y));
+        }
+        else
+        {
+            over = true;
+        }
+    }
+
+    public List<Point> getSnakeParts()
+    {
+        return snakeParts;
     }
 }

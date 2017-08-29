@@ -9,14 +9,27 @@ import java.awt.*;
 @SuppressWarnings("serial")
 public class RenderPanel extends JPanel
 {
-    public static int curColor = 0;
+    private static Color backGround = new Color(15253271);
+    private Snake snake;
+
+    public RenderPanel(Snake snake)
+    {
+        this.snake = snake;
+    }
+
     @Override
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        g.setColor(new Color(curColor));
+        g.setColor(backGround);
         g.fillRect(0,0,800,700);
-        curColor++;
+        g.setColor(Color.red);
+
+        for (Point point : snake.getSnakeParts())
+        {
+            g.fillRect(point.x * Snake.SCALA, point.y * Snake.SCALA, Snake.SCALA, Snake.SCALA);
+
+        }
     }
 
 
